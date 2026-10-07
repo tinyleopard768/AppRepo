@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AppRepo · Android Open Source Apps</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2314171f'/%3E%3Cpath d='M16 18h14c8 0 13 4 13 10s-5 10-13 10h-6v8H16V18zm8 7v6h6c3 0 5-1 5-3s-2-3-5-3h-6z' fill='%236ee7b7'/%3E%3Cpath d='M46 46v-6h6v6h-6zm0-8V22h6v16h-6z' fill='%236ee7b7'/%3E%3C/svg%3E">
+<style>
+:root{
+  --bg-0:#14171f; --bg-1:#1c2030; --bg-2:#232a3a; --bg-3:#2b3346;
+  --line:#2e3648; --line-soft:#262d3d;
+  --text-0:#eef2f8; --text-1:#9aa7bd; --text-2:#6b7690;
+  --accent:#6ee7b7; --accent-dim:#2f8f6d; --warn:#fbbf24;
+  --mono:ui-monospace,"Cascadia Code",Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  --radius:12px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg-0);color:var(--text-0);font-family:var(--sans);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+::selection{background:var(--accent-dim);color:#fff}
+a{color:var(--accent);text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+
+header{position:sticky;top:0;z-index:50;background:rgba(20,23,31,.86);backdrop-filter:blur(10px);border-bottom:1px solid var(--line-soft)}
+.nav{max-width:1180px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:18px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px;letter-spacing:.3px;cursor:pointer}
+.brand svg{width:30px;height:30px;flex:none}
+.brand em{font-style:normal;color:var(--accent)}
+.nav-tabs{display:flex;gap:4px;margin-left:8px}
+.nav-tab{padding:7px 14px;border-radius:8px;color:var(--text-1);font-size:14px;font-weight:500;transition:background .15s,color .15s}
+.nav-tab:hover{background:var(--bg-2);color:var(--text-0)}
+.nav-tab.active{background:var(--bg-3);color:var(--accent)}
+.search-wrap{position:relative;margin-left:auto;width:240px}
+.search-wrap input{width:100%;padding:8px 14px 8px 34px;border-radius:9px;background:var(--bg-2);border:1px solid var(--line);color:var(--text-0);font-family:inherit;font-size:14px;outline:none;transition:border-color .15s}
+.search-wrap input:focus{border-color:var(--accent-dim)}
+.search-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:16px;height:16px;stroke:var(--text-2)}
+
+main{max-width:1180px;margin:0 auto;padding:28px 20px 60px}
+.view{display:none}
+.view.active{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+.notice{display:flex;gap:10px;align-items:flex-start;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.25);color:var(--warn);border-radius:10px;padding:10px 14px;font-size:13px;margin-bottom:26px}
+.notice svg{width:15px;height:15px;flex:none;margin-top:2px}
+
+.hero{padding:52px 0 40px;text-align:center}
+.hero .kicker{display:inline-block;font-family:var(--mono);font-size:12px;letter-spacing:2px;color:var(--accent);border:1px solid var(--accent-dim);border-radius:999px;padding:4px 14px;margin-bottom:18px}
+.hero h1{font-size:44px;line-height:1.15;font-weight:800;letter-spacing:.5px}
+.hero h1 span{color:var(--accent)}
+.hero p{color:var(--text-1);max-width:600px;margin:16px auto 0;font-size:16px}
+.hero-cta{display:flex;justify-content:center;gap:12px;margin-top:26px;flex-wrap:wrap}
+.hero-stats{display:flex;justify-content:center;gap:44px;margin-top:34px}
+.stat{text-align:center}
+.stat b{display:block;font-family:var(--mono);font-size:26px;color:var(--text-0)}
+.stat span{font-size:12px;color:var(--text-2);letter-spacing:1px}
+
+.section-head{display:flex;align-items:baseline;gap:12px;margin:34px 0 16px}
+.section-head h2{font-size:20px;font-weight:700}
+.section-head .hint{font-family:var(--mono);font-size:12px;color:var(--text-2)}
+
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.card{background:var(--bg-1);border:1px solid var(--line-soft);border-radius:var(--radius);padding:16px;cursor:pointer;transition:transform .18s,border-color .18s,background .18s}
+.card:hover{transform:translateY(-3px);border-color:var(--accent-dim);background:var(--bg-2)}
+.card .head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.card .head .ico{width:34px;height:34px;border-radius:9px;background:var(--bg-3);flex:none;position:relative;overflow:hidden}
+.card .head .ico img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.card .head .ico b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;font-size:15px;color:var(--accent)}
+.card .head .cat{font-family:var(--mono);font-size:10.5px;color:var(--accent);border:1px solid var(--accent-dim);border-radius:6px;padding:2px 7px;margin-left:auto}
+.card .head .cat.niche{color:var(--warn);border-color:rgba(251,191,36,.4)}
+.card h3{font-size:15.5px;font-weight:700;margin-bottom:6px;letter-spacing:.2px}
+.card p{font-size:12.5px;color:var(--text-1);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:38px}
+.card .meta{display:flex;align-items:center;gap:12px;margin-top:13px;font-family:var(--mono);font-size:11.5px;color:var(--text-2)}
+.card .meta .star{display:flex;align-items:center;gap:4px}
+.card .meta .star svg{width:12px;height:12px;fill:var(--warn);stroke:var(--warn)}
+.card .meta .rel{margin-left:auto}
+.card .rel-tag{font-size:10px;color:var(--warn);border:1px solid rgba(251,191,36,.4);border-radius:4px;padding:1px 6px}
+
+.list{display:flex;flex-direction:column;gap:10px}
+.row{display:flex;align-items:center;gap:14px;background:var(--bg-1);border:1px solid var(--line-soft);border-radius:10px;padding:10px 16px;cursor:pointer;transition:border-color .15s,background .15s}
+.row:hover{border-color:var(--accent-dim);background:var(--bg-2)}
+.row .ico{width:26px;height:26px;border-radius:7px;background:var(--bg-3);flex:none;position:relative;overflow:hidden}
+.row .ico img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.row .ico b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;font-size:12px;color:var(--accent)}
+.row .rk{font-family:var(--mono);font-size:13px;color:var(--text-2);width:24px;flex:none;text-align:right}
+.row .nm{font-weight:600;font-size:14px}
+.row .nm small{color:var(--text-2);font-weight:400;margin-left:8px;font-size:12px}
+.row .st{margin-left:auto;display:flex;gap:14px;font-family:var(--mono);font-size:12px;color:var(--text-2)}
+.row .st .up{color:var(--accent)}
+
+.detail-back{display:inline-flex;align-items:center;gap:6px;color:var(--text-1);font-size:13px;margin-bottom:18px;padding:6px 10px;border-radius:8px}
+.detail-back:hover{background:var(--bg-2);color:var(--text-0)}
+.detail-back svg{width:14px;height:14px}
+.detail-card{background:var(--bg-1);border:1px solid var(--line);border-radius:14px;padding:26px 26px 22px}
+.detail-card .dt{display:flex;align-items:flex-start;gap:16px}
+.detail-card .dt .ico{width:58px;height:58px;border-radius:14px;background:var(--bg-3);border:1px solid var(--line);flex:none;position:relative;overflow:hidden}
+.detail-card .dt .ico img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.detail-card .dt .ico b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;font-size:22px;color:var(--accent)}
+.detail-card h1{font-size:26px;font-weight:800;letter-spacing:.3px}
+.detail-card .owner{font-family:var(--mono);font-size:13px;color:var(--text-2);margin-top:2px}
+.detail-card .desc{color:var(--text-1);margin-top:12px;font-size:14.5px}
+.detail-meta{display:flex;flex-wrap:wrap;gap:22px;margin-top:20px;padding-top:18px;border-top:1px solid var(--line-soft)}
+.detail-meta .dm{text-align:center;min-width:72px}
+.detail-meta .dm b{display:block;font-family:var(--mono);font-size:20px}
+.detail-meta .dm span{font-size:11px;color:var(--text-2);letter-spacing:1px}
+.detail-actions{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
+.btn{padding:9px 18px;border-radius:9px;font-size:14px;font-weight:600;background:var(--bg-3);color:var(--text-0);border:1px solid var(--line);transition:background .15s,border-color .15s,transform .1s}
+.btn:hover{background:var(--bg-2)}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:var(--accent);color:#0c1a14;border-color:var(--accent)}
+.btn.primary:hover{background:#7deec6}
+.btn.ghost{background:transparent}
+.releases{margin-top:26px}
+.releases h3{font-size:15px;margin-bottom:10px;color:var(--text-1);font-weight:600}
+.rel-item{background:var(--bg-1);border:1px solid var(--line-soft);border-radius:10px;padding:12px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px}
+.rel-item .ver{font-family:var(--mono);font-weight:700;color:var(--accent);font-size:13px}
+.rel-item .ttl{color:var(--text-1);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rel-item .lat{margin-left:auto;font-size:10px;color:#0c1a14;background:var(--accent);border-radius:4px;padding:1px 7px;font-weight:700}
+.rel-item .date{font-family:var(--mono);font-size:11px;color:var(--text-2);flex:none}
+.rel-empty{color:var(--text-2);font-size:13px;padding:10px 2px}
+
+.browser{background:var(--bg-1);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;height:80vh}
+.browser-bar{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg-2);border-bottom:1px solid var(--line-soft);flex:none}
+.browser-bar .b-title{font-weight:600;font-size:14px;display:flex;align-items:center;gap:8px;min-width:0}
+.browser-bar .b-title svg{width:15px;height:15px;stroke:var(--accent);flex:none}
+.browser-bar .b-title span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.browser-bar .spacer{flex:1}
+.browser-bar .b-btn{padding:5px 12px;border-radius:7px;font-size:12px;color:var(--text-1);border:1px solid var(--line);display:flex;align-items:center;gap:5px}
+.browser-bar .b-btn:hover{background:var(--bg-3);color:var(--text-0)}
+.browser-bar .b-btn svg{width:13px;height:13px}
+.browser-tip{font-size:12px;color:var(--text-2);padding:6px 14px;background:var(--bg-1);border-bottom:1px solid var(--line-soft);flex:none}
+.browser-frame{flex:1;position:relative;background:#fff}
+.browser-frame iframe{width:100%;height:100%;border:none;display:block}
+
+footer{border-top:1px solid var(--line-soft);padding:26px 20px 34px;max-width:1180px;margin:0 auto;color:var(--text-2);font-size:12.5px;display:flex;flex-wrap:wrap;gap:8px 20px;align-items:center}
+footer .src{display:flex;align-items:center;gap:6px}
+footer .src svg{width:14px;height:14px}
+
+@media (max-width:960px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:600px){
+  .nav{flex-wrap:wrap;gap:10px}
+  .search-wrap{order:5;width:100%}
+  .hero h1{font-size:30px}
+  .hero-stats{gap:26px}
+  .grid{grid-template-columns:1fr}
+  .hero{padding:36px 0 26px}
+  .browser{height:74vh}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <div class="brand" onclick="go('#/')">
+      <svg viewBox="0 0 64 64" fill="none"><rect width="64" height="64" rx="14" fill="#14171f"/><path d="M16 18h14c8 0 13 4 13 10s-5 10-13 10h-6v8H16V18zm8 7v6h6c3 0 5-1 5-3s-2-3-5-3h-6z" fill="#6ee7b7"/><path d="M46 46v-6h6v6h-6zm0-8V22h6v16h-6z" fill="#6ee7b7"/></svg>
+      App<em>Repo</em>
+    </div>
+    <nav class="nav-tabs">
+      <button class="nav-tab active" data-tab="home">Featured</button>
+      <button class="nav-tab" data-tab="live">Live App</button>
+    </nav>
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="search" type="text" placeholder="Search open-source apps…" autocomplete="off">
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- ===== View: Home ===== -->
+  <section id="view-home" class="view active">
+    <div class="notice">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4m0 4h.01"/></svg>
+      <span>Static showcase: ships with an offline snapshot of project data; live values refresh from the GitHub API when online. Login, upload and comments are not part of this static version — open the Live App for the full experience.</span>
+    </div>
+
+    <div class="hero">
+      <span class="kicker">OPEN SOURCE · ANDROID</span>
+      <h1>Discover great<br><span>Android open-source apps</span></h1>
+      <p>Curated open-source Android projects from GitHub. Check details and releases, or open the full app — all in one place.</p>
+      <div class="hero-cta">
+        <button class="btn primary" onclick="go('#/live')">Open Full App</button>
+        <button class="btn ghost" onclick="document.getElementById('grid-featured').scrollIntoView({behavior:'smooth'})">Browse Projects</button>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><b id="st-projects">—</b><span>PROJECTS</span></div>
+        <div class="stat"><b id="st-stars">—</b><span>TOTAL STARS</span></div>
+        <div class="stat"><b id="st-releases">—</b><span>RELEASES</span></div>
+      </div>
+    </div>
+
+    <div class="section-head"><h2>Featured Projects</h2><span class="hint" id="hint-featured">from the GitHub API</span></div>
+    <div class="grid" id="grid-featured"></div>
+
+    <div class="section-head"><h2>All Projects</h2><span class="hint">sorted by stars</span></div>
+    <div class="list" id="list-explore"></div>
+  </section>
+
+  <!-- ===== View: Full App (embedded) ===== -->
+  <section id="view-live" class="view">
+    <div class="browser">
+      <div class="browser-bar">
+        <div class="b-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 9h18M7 7h.01"/></svg>
+          <span>AppRepo · Full App</span>
+        </div>
+        <div class="spacer"></div>
+        <button class="b-btn" onclick="window.open(LIVE_URL,'_blank')">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg>
+          New tab
+        </button>
+        <button class="b-btn" onclick="go('#/')">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+          Back
+        </button>
+      </div>
+      <div class="browser-tip">The full app runs on its host platform; it needs to stay online. If the panel is blank, open it in a new tab.</div>
+      <div class="browser-frame">
+        <iframe id="live-frame" title="AppRepo full app" allow="fullscreen; clipboard-write"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== View: Detail ===== -->
+  <section id="view-detail" class="view">
+    <button class="detail-back" onclick="go('#/')">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+      Back to home
+    </button>
+    <div id="detail-body"></div>
+  </section>
+
+  <!-- ===== View: Built-in browser ===== -->
+  <section id="view-browser" class="view">
+    <div class="browser">
+      <div class="browser-bar">
+        <div class="b-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.9 5.7 3.9 9S14.5 18.4 12 21M12 3c-2.5 2.6-3.9 5.7-3.9 9S9.5 18.4 12 21"/></svg>
+          <span id="browser-title">Loading…</span>
+        </div>
+        <div class="spacer"></div>
+        <button class="b-btn" onclick="openExternal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg>
+          New tab
+        </button>
+        <button class="b-btn" onclick="go('#/detail/'+browseKey)">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+          Back to details
+        </button>
+      </div>
+      <div class="browser-tip">Some sites (e.g. github.com) block in-page embedding. If the content is blank, open it in a new tab.</div>
+      <div class="browser-frame">
+        <iframe id="browser-frame" title="Built-in browser"></iframe>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="src">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.9c0-1 .1-1.6-.3-2.2 1.7-.2 3.5-1 3.5-4 0-1-.3-1.8-.9-2.5.1-.2.4-1.4-.1-3 0 0-.8-.3-2.6 1a9 9 0 0 0-4.8 0C8.6 6.3 7.8 6.6 7.8 6.6c-.5 1.6-.2 2.8-.1 3-.6.7-.9 1.5-.9 2.5 0 3 1.8 3.8 3.5 4-.3.3-.4.8-.3 1.6V22"/></svg>
+    Data source: GitHub API
+  </div>
+  <span>AppRepo static showcase · Host on GitHub + Cloudflare Pages</span>
+</footer>
+
+<script>
+var LIVE_URL="https://4kfkhu01e5q1f.doubaoapps.com/app/app_17d65uutjz9";
+
+var SEED=[
+  {owner:"termux",repo:"termux-app",name:"Termux",cat:"Tool",niche:false,desc:"Terminal emulator with a Linux environment for Android, no root required.",snap:{stars:62100}},
+  {owner:"signalapp",repo:"Signal-Android",name:"Signal",cat:"Messaging",niche:false,desc:"A private, end-to-end encrypted messenger for Android.",snap:{stars:29400}},
+  {owner:"mozilla-mobile",repo:"fenix",name:"Firefox",cat:"Browser",niche:true,desc:"Mozilla's next-generation Firefox for Android.",snap:{stars:6400}},
+  {owner:"bitwarden",repo:"mobile",name:"Bitwarden",cat:"Security",niche:true,desc:"Open-source password manager for Android.",snap:{stars:223}},
+  {owner:"mihonapp",repo:"mihon",name:"Mihon",cat:"Reading",niche:false,desc:"Free and open-source manga reader, a Tachiyomi community fork.",snap:{stars:24100}},
+  {owner:"TeamNewPipe",repo:"NewPipe",name:"NewPipe",cat:"Video",niche:false,desc:"A libre lightweight streaming front-end for Android.",snap:{stars:39900}},
+  {owner:"ankidroid",repo:"Anki-Android",name:"AnkiDroid",cat:"Learning",niche:false,desc:"Anki flashcards on Android — spaced repetition.",snap:{stars:11900}},
+  {owner:"FossifyOrg",repo:"Gallery",name:"Fossify Gallery",cat:"Gallery",niche:true,desc:"Ad-free, open-source photo and video gallery.",snap:{stars:3800}},
+  {owner:"iSoron",repo:"uhabits",name:"uHabits",cat:"Productivity",niche:false,desc:"Loop Habit Tracker — build long-term habits.",snap:{stars:18300},icon:"https://f-droid.org/repo/icons-xxxhdpi/org.isoron.uhabits.png"},
+  {owner:"nextcloud",repo:"android",name:"Nextcloud",cat:"Storage",niche:true,desc:"Your private cloud in your pocket — sync and office suite.",snap:{stars:5600}},
+  {owner:"RikkaApps",repo:"Shizuku",name:"Shizuku",cat:"System",niche:false,desc:"Use system APIs directly with adb/root privileges.",snap:{stars:31100},noav:true},
+  {owner:"florisboard",repo:"florisboard",name:"FlorisBoard",cat:"Keyboard",niche:true,desc:"A modern, open-source, privacy-first keyboard.",snap:{stars:8700}}
+];
+SEED.forEach(function(s){s.stars=s.snap?s.snap.stars:0;s.forks=0;s.releases=0;s.latest=null;s.descLoaded=false});
+
+function $(id){return document.getElementById(id)}
+function go(h){location.hash=h}
+var browseKey="";
+var apiFail=0;
+var CACHE_TTL=10*60*1000;
+
+function readCache(k){try{var c=JSON.parse(localStorage.getItem("apprepo_"+k));if(c&&Date.now()-c.t<CACHE_TTL)return c.v}catch(e){}return null}
+function writeCache(k,v){try{localStorage.setItem("apprepo_"+k,JSON.stringify({t:Date.now(),v:v}))}catch(e){}}
+function gh(path){return fetch("https://api.github.com"+path,{headers:{Accept:"application/vnd.github+json"}}).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json()})}
+
+function fetchRepo(s){
+  var c=readCache("repo_"+s.owner+"_"+s.repo);
+  if(c){applyRepo(s,c);return Promise.resolve()}
+  return gh("/repos/"+s.owner+"/"+s.repo).then(function(d){
+    writeCache("repo_"+s.owner+"_"+s.repo,{stars:d.stargazers_count,forks:d.forks_count,desc:d.description||s.desc,home:d.homepage||""});
+    applyRepo(s,{stars:d.stargazers_count,forks:d.forks_count,desc:d.description||s.desc,home:d.homepage||""});
+  }).catch(function(){apiFail++;});
+}
+function applyRepo(s,d){s.stars=d.stars;s.forks=d.forks;s.descLoaded=true;if(d.desc)s.desc=d.desc;s.home=d.home||""}
+
+function fetchReleases(s){
+  var c=readCache("rel_"+s.owner+"_"+s.repo);
+  if(c){s.latest=c;return Promise.resolve()}
+  return gh("/repos/"+s.owner+"/"+s.repo+"/releases?per_page=3").then(function(d){
+    s.latest=d;writeCache("rel_"+s.owner+"_"+s.repo,d);
+  }).catch(function(){s.latest=null;s.releases=-1;apiFail++});
+}
+
+function starsFmt(n){if(n>=1000)return (n/1000).toFixed(1).replace(/\.0$/,"")+"k";return String(n)}
+function avatar(o){return "https://github.com/"+encodeURIComponent(o)+".png?size=96"}
+function logoHTML(s){
+  var src=s.icon||(s.noav?"":"https://github.com/"+encodeURIComponent(s.owner)+".png?size=96");
+  return '<span class="ico">'+(src?'<img src="'+src+'" alt="" loading="lazy" onerror="this.style.display=\'none\'">':'')+'<b>'+escapeHtml(s.name.charAt(0).toUpperCase())+'</b></span>';
+}
+
+function cardHTML(s){
+  var relTxt="";
+  if(s.releases>0)relTxt='<span class="rel">'+s.releases+' releases</span>';
+  else if(s.releases===0&&s.latest!==null)relTxt='<span class="rel-tag">NO RELEASE</span>';
+  else if(s.releases<0)relTxt='<span class="rel">unknown</span>';
+  return '<div class="card" onclick="go(\'#/detail/'+encodeURIComponent(s.owner)+'/'+encodeURIComponent(s.repo)+'\')">'+
+    '<div class="head">'+logoHTML(s)+'<span class="cat '+(s.niche?"niche":"")+'">'+(s.niche?"NICHE":"POPULAR")+' · '+s.cat+'</span></div>'+
+    '<h3>'+s.name+'</h3><p>'+(s.desc||"")+'</p>'+
+    '<div class="meta"><span class="star"><svg viewBox="0 0 24 24"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg>'+starsFmt(s.stars)+'</span>'+
+    relTxt+'</div></div>';
+}
+function rowHTML(s,i){
+  return '<div class="row" onclick="go(\'#/detail/'+encodeURIComponent(s.owner)+'/'+encodeURIComponent(s.repo)+'\')">'+
+    logoHTML(s)+'<span class="rk">'+(i+1)+'</span>'+
+    '<span class="nm">'+s.name+'<small>'+s.owner+'/'+s.repo+'</small></span>'+
+    '<span class="st"><span class="up">★ '+starsFmt(s.stars)+'</span><span>FORKS '+starsFmt(s.forks)+'</span></span></div>';
+}
+
+function renderHome(filter){
+  $("hint-featured").textContent=apiFail>0?"Some data limited (GitHub API rate limit — retries automatically)":"from the GitHub API";
+  var arr=SEED.slice();
+  if(filter){var f=filter.toLowerCase();arr=arr.filter(function(s){return (s.name+" "+s.owner+" "+s.repo+" "+s.cat).toLowerCase().indexOf(f)>-1})}
+  var byStars=arr.slice().sort(function(a,b){return b.stars-a.stars});
+  var featured=byStars.slice(0,8);
+  $("grid-featured").innerHTML=featured.map(cardHTML).join("")||'<div class="rel-empty">No matching projects</div>';
+  $("list-explore").innerHTML=byStars.map(rowHTML).join("")||'<div class="rel-empty">No matching projects</div>';
+}
+
+function renderDetail(s){
+  var rels="";
+  if(s.latest&&s.latest.length){
+    rels=s.latest.slice(0,5).map(function(r,i){
+      var d=(r.published_at||r.created_at||"").slice(0,10);
+      return '<div class="rel-item"><span class="ver">'+escapeHtml(r.tag_name||r.name)+'</span>'+
+        '<span class="ttl">'+escapeHtml((r.name||"").slice(0,60))+'</span>'+
+        (i===0?'<span class="lat">LATEST</span>':'')+
+        '<span class="date">'+d+'</span></div>';
+    }).join("");
+  }else{
+    rels='<div class="rel-empty">'+(s.releases===-1?'Release info unavailable (GitHub API rate limit) — retries automatically.':(s.releases===0?'This project has no releases yet.':'Loading releases…'))+'</div>';
+  }
+  $("detail-body").innerHTML=
+    '<div class="detail-card">'+
+      '<div class="dt">'+logoHTML(s)+'<div><h1>'+escapeHtml(s.name)+'</h1>'+
+      '<div class="owner">'+escapeHtml(s.owner)+' / '+escapeHtml(s.repo)+' · '+escapeHtml(s.cat)+'</div>'+
+      '<p class="desc">'+(s.descLoaded?escapeHtml(s.desc||""):"Loading project info…")+'</p></div></div>'+
+      '<div class="detail-meta">'+
+        '<div class="dm"><b>'+starsFmt(s.stars)+'</b><span>STARS</span></div>'+
+        '<div class="dm"><b>'+starsFmt(s.forks)+'</b><span>FORKS</span></div>'+
+        '<div class="dm"><b>'+(s.releases)+'</b><span>RELEASES</span></div>'+
+        '<div class="dm"><b>'+(s.latest&&s.latest[0]?(s.latest[0].tag_name||"—"):"—")+'</b><span>LATEST</span></div>'+
+      '</div>'+
+      '<div class="detail-actions">'+
+        '<button class="btn primary" onclick="openBrowse(\''+s.owner+'/'+s.repo+'\')">Browse</button>'+
+        '<a class="btn ghost" href="https://github.com/'+s.owner+'/'+s.repo+'" target="_blank" rel="noopener">GitHub repo</a>'+
+      '</div>'+
+    '</div>'+
+    '<div class="releases"><h3>Release history</h3>'+rels+'</div>';
+}
+
+function openBrowse(key){
+  browseKey=key;
+  var s=findByKey(key);
+  $("browser-title").textContent=s?s.name+" · "+key:"Loading…";
+  var frame=$("browser-frame");
+  frame.src="https://github.com/"+key;
+  go("#/browse/"+key);
+}
+function openExternal(){window.open("https://github.com/"+browseKey,"_blank")}
+
+function findByKey(key){
+  var p=key.split("/");
+  for(var i=0;i<SEED.length;i++){if(SEED[i].owner===p[0]&&SEED[i].repo===p[1])return SEED[i]}
+  return null;
+}
+function escapeHtml(t){if(t==null)return "";return String(t).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+
+function router(){
+  var h=location.hash||"#/";
+  var parts=h.replace(/^#\/?/,"").split("/");
+  var view=parts[0]||"";
+  var activeView="home";
+  document.querySelectorAll(".view").forEach(function(v){v.classList.remove("active")});
+  document.querySelectorAll(".nav-tab").forEach(function(t){t.classList.remove("active")});
+
+  if(view==="live"){
+    activeView="live";
+    document.querySelector('.nav-tab[data-tab="live"]').classList.add("active");
+    var lf=$("live-frame");
+    if(lf.getAttribute("src")!==LIVE_URL)lf.src=LIVE_URL;
+  }else if(view==="detail"&&parts[1]&&parts[2]){
+    var s=findByKey(parts[1]+"/"+parts[2]);
+    activeView="detail";
+    if(s){renderDetail(s);if(!s.latest)fetchReleases(s).then(function(){renderDetail(s)})}
+    else{$("detail-body").innerHTML='<div class="rel-empty">Project not found</div>'}
+  }else if(view==="browse"&&parts[1]){
+    browseKey=parts[1]+"/"+(parts[2]||"");
+    var s=findByKey(browseKey);
+    activeView="browser";
+    $("browser-title").textContent=s?s.name+" · "+browseKey:"Loading…";
+    var frame=$("browser-frame");
+    if(frame.getAttribute("src")!=="https://github.com/"+browseKey)frame.src="https://github.com/"+browseKey;
+  }else{
+    activeView="home";
+    document.querySelector('.nav-tab[data-tab="home"]').classList.add("active");
+    renderHome($("search").value.trim());
+  }
+  $("view-"+activeView).classList.add("active");
+  window.scrollTo(0,0);
+}
+
+document.querySelectorAll(".nav-tab").forEach(function(t){
+  t.addEventListener("click",function(){
+    document.querySelectorAll(".nav-tab").forEach(function(x){x.classList.remove("active")});
+    t.classList.add("active");
+    $("search").value="";
+    go(t.dataset.tab==="home"?"#/":"#/live");
+  });
+});
+var searchTimer;
+$("search").addEventListener("input",function(){clearTimeout(searchTimer);searchTimer=setTimeout(function(){renderHome($("search").value.trim())},180)});
+window.addEventListener("hashchange",router);
+
+function boot(){
+  renderHome("");
+  var totals={stars:0,releases:0};
+  SEED.forEach(function(s){
+    fetchRepo(s).then(function(){
+      fetchReleases(s).then(function(){
+        totals.stars+=s.stars;
+        s.releases=s.latest?s.latest.length:0;
+        totals.releases+=s.releases;
+        renderHome($("search").value.trim());
+        $("st-projects").textContent=SEED.length;
+        $("st-stars").textContent=starsFmt(totals.stars);
+        $("st-releases").textContent=totals.releases;
+      });
+    });
+  });
+  $("st-projects").textContent=SEED.length;
+  var initStars=0;SEED.forEach(function(s){initStars+=s.stars});
+  $("st-stars").textContent=starsFmt(initStars);
+}
+boot();
+router();
+</script>
+</body>
+</html>
